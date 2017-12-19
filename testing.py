@@ -8,8 +8,8 @@ from keras.models import load_model
 
 
 path, _ = os.path.split(os.path.abspath(__file__))
-# DATA_DIR = path + '/test/audio/'
-DATA_DIR = path + '/test/small/'
+DATA_DIR = path + '/test/audio/'
+# DATA_DIR = path + '/test/small/'
 POSSIBLE_LABELS = 'yes no up down left right on off stop go silence unknown'.split()
 id2name = {i: name for i, name in enumerate(POSSIBLE_LABELS)}
 name2id = {name: i for i, name in id2name.items()}
@@ -18,7 +18,7 @@ len(id2name)
 
 def load_wav(data_dir):
   all_files_abs = glob(os.path.join(data_dir, '*wav'))
-  file_name = [i.split('/small/', 1)[1] for i in all_files_abs]
+  file_name = [i.split('/audio/', 1)[1] for i in all_files_abs]
   samples_list = []
   for i in range(len(all_files_abs)):
     print(data_dir + file_name[i])
@@ -64,7 +64,7 @@ def transform(listdir, label, size):
 
 wav_data, file_name = load_wav(DATA_DIR)
 
-split_piece = 3
+split_piece = 6
 wav_size = len(wav_data) / split_piece
 x_test = []
 for i in range(int(wav_size)+1):
@@ -75,10 +75,11 @@ for i in range(int(wav_size)+1):
     print(wav_data[i*split_piece:len(wav_data)])
     spectrogram = process_wav_file(wav_data[i*split_piece:len(wav_data)])
   x_test.append(spectrogram)
-x_test = np.vstack((x_test))
+# x_test = np.vstack((x_test))
 
 model = load_model('h5/150_64.h5')
-predict = model.predict(x_test, verbose=1)
+predict = [model.predict(x_test[i], verbose=1) for i in range(len(x_test))]
+predict = np.vstack(predict)
 predict = np.argmax(predict, axis=1)
 label_str = transform(id2name, predict, len(wav_data))
 
