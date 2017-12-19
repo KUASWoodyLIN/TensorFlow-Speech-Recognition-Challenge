@@ -8,7 +8,8 @@ from keras.models import load_model
 
 
 path, _ = os.path.split(os.path.abspath(__file__))
-DATA_DIR = path + '/test_data/test/'
+DATA_DIR = path + '/test/audio/'
+# DATA_DIR = path + '/test/small/'
 POSSIBLE_LABELS = 'yes no up down left right on off stop go silence unknown'.split()
 id2name = {i: name for i, name in enumerate(POSSIBLE_LABELS)}
 name2id = {name: i for i, name in id2name.items()}
@@ -16,14 +17,15 @@ len(id2name)
 
 
 def load_wav(data_dir):
-  all_files = glob(os.path.join(data_dir, '*wav'))
+  all_files_abs = glob(os.path.join(data_dir, '*wav'))
+  file_name = [i.split('/audio/', 1)[1] for i in all_files_abs]
   samples_list = []
-  for i in range(1, len(all_files)+1):
-    print(data_dir + str(i) + '.wav')
-    sample_rate, samples = wavfile.read(data_dir + str(i) + '.wav')
+  for i in range(len(all_files_abs)):
+    print(data_dir + file_name[i])
+    sample_rate, samples = wavfile.read(data_dir + file_name[i])
     samples = samples.astype(np.float32) / np.iinfo(np.int16).max
     samples_list.append(samples)
-  return samples_list
+  return samples_list, file_name
 
 
 def process_wav_file(data, window_size=20, step_size=10, eps=1e-10):
@@ -60,7 +62,7 @@ def transform(listdir, label, size):
   return label_str
 
 
-wav_data = load_wav(DATA_DIR)
+wav_data, file_name = load_wav(DATA_DIR)
 freqs, times, x_test = process_wav_file(wav_data)
 
 model = load_model('h5/150_64.h5')
@@ -71,5 +73,5 @@ label_str = transform(id2name, predict, len(wav_data))
 with open('price_pred.csv', 'w') as f:
     w = csv.writer(f)
     w.writerow(['fname', 'label'])
-    for i, y in enumerate(label_str, 1):
-        w.writerow([str(i) + '.wav', y])
+    for i in range(len(label_str)):
+        w.writerow([file_name[i], label_str[i]])
