@@ -18,7 +18,7 @@ from keras.utils.np_utils import to_categorical
 
 path, _ = os.path.split(os.path.abspath(__file__))
 DATA_DIR = path + '/train/audio/'
-# DATA_DIR = path + '/train_data/train/small_audio/'    # small_audio, single_data
+# DATA_DIR = path + '/train/small/'    # small_audio, single_data
 ALL_LABELS = 'yes bird happy five eight left house one four six two marvin nine dog seven stop no go ' \
              'right sheila zero cat on wow off down up _background_noise_ _silence_ three bed tree'.split()
 POSSIBLE_LABELS = 'yes no up down left right on off stop go silence unknown'.split()
@@ -149,7 +149,7 @@ model.compile(loss='categorical_crossentropy',
               optimizer=Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08),
               metrics=['accuracy'])
 
-epochs = 150
+epochs = 30
 batch_size = 64
 file_name = str(epochs) + '_' + str(batch_size)
 cbks = [
