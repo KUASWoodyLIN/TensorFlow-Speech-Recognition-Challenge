@@ -8,8 +8,8 @@ from keras.models import load_model
 
 
 path, _ = os.path.split(os.path.abspath(__file__))
-DATA_DIR = path + '/test/audio/'
-# DATA_DIR = path + '/test/small/'
+# DATA_DIR = path + '/test/audio/'
+DATA_DIR = path + '/test/small/'
 POSSIBLE_LABELS = 'yes no up down left right on off stop go silence unknown'.split()
 id2name = {i: name for i, name in enumerate(POSSIBLE_LABELS)}
 name2id = {name: i for i, name in id2name.items()}
@@ -18,7 +18,7 @@ len(id2name)
 
 def load_wav(data_dir):
   all_files_abs = glob(os.path.join(data_dir, '*wav'))
-  file_name = [i.split('/audio/', 1)[1] for i in all_files_abs]
+  file_name = [i.split('/small/', 1)[1] for i in all_files_abs]
   samples_list = []
   for i in range(len(all_files_abs)):
     print(data_dir + file_name[i])
@@ -51,7 +51,7 @@ def process_wav_file(data, window_size=20, step_size=10, eps=1e-10):
     spectrogram.append(np.log(spec.astype(np.float32) + eps))
   spectrogram = np.expand_dims(np.array(spectrogram), 3)
 
-  return freqs, time, spectrogram
+  return spectrogram
 
 
 def transform(listdir, label, size):
@@ -63,7 +63,19 @@ def transform(listdir, label, size):
 
 
 wav_data, file_name = load_wav(DATA_DIR)
-freqs, times, x_test = process_wav_file(wav_data)
+
+split_piece = 3
+wav_size = len(wav_data) / split_piece
+x_test = []
+for i in range(int(wav_size)+1):
+  if i <= int(wav_size):
+    print(wav_data[i*split_piece:(i+1)*split_piece])
+    spectrogram = process_wav_file(wav_data[i*split_piece:(i+1)*split_piece])
+  else:
+    print(wav_data[i*split_piece:len(wav_data)])
+    spectrogram = process_wav_file(wav_data[i*split_piece:len(wav_data)])
+  x_test.append(spectrogram)
+x_test = np.vstack((x_test))
 
 model = load_model('h5/150_64.h5')
 predict = model.predict(x_test, verbose=1)
