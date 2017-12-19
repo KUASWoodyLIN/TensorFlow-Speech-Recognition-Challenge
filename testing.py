@@ -69,10 +69,8 @@ wav_size = len(wav_data) / split_piece
 x_test = []
 for i in range(int(wav_size)+1):
   if i <= int(wav_size):
-    print(wav_data[i*split_piece:(i+1)*split_piece])
     spectrogram = process_wav_file(wav_data[i*split_piece:(i+1)*split_piece])
   else:
-    print(wav_data[i*split_piece:len(wav_data)])
     spectrogram = process_wav_file(wav_data[i*split_piece:len(wav_data)])
   x_test.append(spectrogram)
 # x_test = np.vstack((x_test))
