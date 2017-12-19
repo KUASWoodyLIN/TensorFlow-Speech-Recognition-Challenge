@@ -17,7 +17,7 @@ from keras.utils.np_utils import to_categorical
 
 
 path, _ = os.path.split(os.path.abspath(__file__))
-DATA_DIR = path + '/train_data/train/audio/'
+DATA_DIR = path + '/train/audio/'
 # DATA_DIR = path + '/train_data/train/small_audio/'    # small_audio, single_data
 ALL_LABELS = 'yes bird happy five eight left house one four six two marvin nine dog seven stop no go ' \
              'right sheila zero cat on wow off down up _background_noise_ _silence_ three bed tree'.split()
