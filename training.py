@@ -96,10 +96,8 @@ def process_wav_file(data, silence_data=np.array([]), window_size=20, step_size=
       single_data = single_data[i:(i+L)]
     elif len(single_data) < L:
       # no silence way
-      print(silence_data.any())
       if silence_data.any():
         rem_len = L - len(single_data)
-        print(len(silence_data) - rem_len)
         i = np.random.randint(0, len(silence_data) - rem_len)
         silence_part = silence_data[i:(i + L)]
         j = np.random.randint(0, rem_len)
@@ -129,7 +127,6 @@ x_test = [read_wav_file(x) for x in x_test]
 freqs, times, x_train = process_wav_file(x_train, silence_data)
 freqs, times, x_test = process_wav_file(x_test)
 
-print(x_train.shape[1:])
 x_in = Input(shape=x_train.shape[1:])
 x = BatchNormalization()(x_in)
 for i in range(4):
@@ -169,7 +166,6 @@ cbks = [
                       mode='min'),
     TensorBoard(log_dir='logs/' + file_name)
 ]
-print(x_train.shape)
 model.fit(x_train, y_train, epochs=epochs,
           batch_size=batch_size,
           shuffle=True, verbose=1,
