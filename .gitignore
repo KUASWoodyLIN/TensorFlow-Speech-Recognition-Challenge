@@ -4,3 +4,4 @@ test/
 train/
 images/
 predict/
+price_pred.csv
