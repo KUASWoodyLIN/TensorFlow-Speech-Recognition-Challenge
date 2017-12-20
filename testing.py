@@ -8,8 +8,8 @@ from keras.models import load_model
 
 
 path, _ = os.path.split(os.path.abspath(__file__))
-# DATA_DIR = path + '/test/audio/'
-DATA_DIR = path + '/test/small/'
+DATA_DIR = path + '/test/audio/'
+# DATA_DIR = path + '/test/small/'
 POSSIBLE_LABELS = 'yes no up down left right on off stop go silence unknown'.split()
 id2name = {i: name for i, name in enumerate(POSSIBLE_LABELS)}
 name2id = {name: i for i, name in id2name.items()}
@@ -70,7 +70,7 @@ def transform(listdir, label, size):
   return label_str
 
 
-model = load_model('h5/150_64.h5')
+model = load_model('h5/150_64.hdf5')
 print(int(np.ceil(len(test_paths)*1.0/64)))
 predict = model.predict_generator(test_generator(64), int(np.ceil(len(test_paths)/64)))
 predict = np.argmax(predict, axis=1)

@@ -16,8 +16,8 @@ from keras.utils.np_utils import to_categorical
 
 
 path, _ = os.path.split(os.path.abspath(__file__))
-# DATA_DIR = path + '/train/audio/'
-DATA_DIR = path + '/train/small/'    # small_audio, single_data
+DATA_DIR = path + '/train/audio/'
+# DATA_DIR = path + '/train/small/'    # small_audio, single_data
 ALL_LABELS = 'yes bird happy five eight left house one four six two marvin nine dog seven stop no go ' \
              'right sheila zero cat on wow off down up _background_noise_ _silence_ three bed tree'.split()
 POSSIBLE_LABELS = 'yes no up down left right on off stop go silence unknown'.split()
@@ -160,7 +160,7 @@ model.compile(loss='categorical_crossentropy',
               optimizer=Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08),
               metrics=['accuracy'])
 
-epochs = 30
+epochs = 150
 batch_size = 64
 file_name = str(epochs) + '_' + str(batch_size)
 callbacks = [
@@ -178,7 +178,6 @@ callbacks = [
   ModelCheckpoint(monitor='val_loss',
                   filepath='h5/' + file_name + '.hdf5',
                   save_best_only=True,
-                  save_weights_only=True,
                   mode='min'),
   TensorBoard(log_dir='logs/' + file_name)
 ]
@@ -192,7 +191,7 @@ history = model.fit_generator(generator=train_generator(64),
                               validation_steps=int(np.ceil(len(x_valid)/64)))
 
 # model.save('h5/' + file_name + '.h5')
-score = model.evaluate(x_valid, y_valid, verbose=0)
+# score = model.evaluate(x_valid, y_valid, verbose=0)
 
-print('test cost:', score)
+# print('test cost:', score)
 
