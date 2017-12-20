@@ -8,18 +8,13 @@ from keras.models import load_model
 
 
 path, _ = os.path.split(os.path.abspath(__file__))
-DATA_DIR = path + '/test/audio/'
-# DATA_DIR = path + '/test/small/'
+# DATA_DIR = path + '/test/audio/'
+DATA_DIR = path + '/test/small/'
 POSSIBLE_LABELS = 'yes no up down left right on off stop go silence unknown'.split()
 id2name = {i: name for i, name in enumerate(POSSIBLE_LABELS)}
 name2id = {name: i for i, name in id2name.items()}
 len(id2name)
-
-
-def load_wav(data_dir):
-  all_files_abs = glob(os.path.join(data_dir, '*wav'))
-  all_files_name = [i.split('/audio/', 1)[1] for i in all_files_abs]
-  return all_files_abs, all_files_name
+test_paths = glob(os.path.join(DATA_DIR, '*wav'))
 
 
 def read_wav_file(fname):
@@ -53,12 +48,14 @@ def process_wav_file(fname, window_size=20, step_size=10, eps=1e-10):
   return spec
 
 
-def test_generator(test_batch_size, test_paths):
+def test_generator(test_batch_size):
   while True:
+    print(range(0, len(test_paths), test_batch_size))
     for start in range(0, len(test_paths), test_batch_size):
       x_batch = []
       end = min(start + test_batch_size, len(test_paths))
       this_paths = test_paths[start:end]
+      print("start", start, "end", end)
       for x in this_paths:
         x_batch.append(process_wav_file(x))
       x_batch = np.expand_dims(np.array(x_batch), 3)
@@ -73,15 +70,24 @@ def transform(listdir, label, size):
   return label_str
 
 
-all_files_abs, all_files_name = load_wav(DATA_DIR)
-
 model = load_model('h5/150_64.h5')
-predict = model.predict_generator(test_generator(64, all_files_abs), int(np.ceil(len(all_files_abs)/64)))
+print(int(np.ceil(len(test_paths)*1.0/64)))
+predict = model.predict_generator(test_generator(64), int(np.ceil(len(test_paths)/64)))
 predict = np.argmax(predict, axis=1)
-label_str = transform(id2name, predict, len(all_files_abs))
+label_str = transform(id2name, predict, len(test_paths))
 
-with open('price_pred.csv', 'w') as f:
-    w = csv.writer(f)
-    w.writerow(['fname', 'label'])
-    for i in range(len(label_str)):
-        w.writerow([all_files_name[i], label_str[i]])
+submission = dict()
+for i in range(len(test_paths)):
+    fname, label = os.path.basename(test_paths[i]), id2name[predict[i]]
+    submission[fname] = label
+
+with open('starter_submission.csv', 'w') as fout:
+  fout.write('fname,label\n')
+  for fname, label in submission.items():
+    fout.write('{},{}\n'.format(fname, label))
+
+# with open('price_pred.csv', 'w') as f:
+#     w = csv.writer(f)
+#     w.writerow(['fname', 'label'])
+#     for i in range(len(label_str)):
+#         w.writerow([test_paths[i], label_str[i]])

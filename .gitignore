@@ -1,8 +1,9 @@
+price_pred.csv
+
+.idea/
 logs/
 h5/
 test/
 train/
 images/
 predict/
-.idea/
-price_pred.csv
