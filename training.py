@@ -1,14 +1,12 @@
 import os
-import re
 from glob import glob
-import pandas as pd
 import numpy as np
 from scipy.io import wavfile
 from scipy import signal
 
 from sklearn.cross_validation import train_test_split
 
-from keras.models import Sequential, Model, load_model
+from keras.models import Model
 from keras.optimizers import Adam
 from keras.layers import *
 from keras.callbacks import *
