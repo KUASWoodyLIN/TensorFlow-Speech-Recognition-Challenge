@@ -28,8 +28,6 @@ def load_data(data_dir):
   sample = {}
   for key in POSSIBLE_LABELS:
     sample[key] = []
-  sample['silence'] = []
-  sample['unknown'] = []
 
   all_files = glob(os.path.join(data_dir, '*/*wav'))
   for files in all_files:
